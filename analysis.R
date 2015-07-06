@@ -4,6 +4,8 @@ library(ggplot2)
 
 source('./functions.R')
 
+#First we pull the data from the autotrader website
+#----------------------------------------------------------------------
 toyota <- html_session("http://www.autotrader.co.za/used-cars/toyota")
 dataToyota<-getWebPageData(toyota,"^[Toyota]",500)
 
@@ -58,6 +60,15 @@ kia <- html_session("http://www.autotrader.co.za/used-cars/kia")
 dataKia<-getWebPageData(kia,"^[Kia]",500)
 
 #define the make we will use!
+volkswagen <- html_session("http://www.autotrader.co.za/used-cars/volkswagen")
+dataVolkswagen<-getWebPageData(volkswagen,"^[Volk]",500)
+
+audi <- html_session("http://www.autotrader.co.za/used-cars/audi")
+dataAudi<-getWebPageData(audi,"^[Audi]",500)
+
+subaru <- html_session("http://www.autotrader.co.za/used-cars/subaru")
+dataSubaru<-getWebPageData(subaru,"^[Subaru]",500)
+#define the make we will use!
 #kia <- html_session("http://www.autotrader.co.za/used-cars/kia")
 #dataKia<-getWebPageData(mazda,"^[Kia]",2)
 
@@ -65,7 +76,10 @@ dataKia<-getWebPageData(kia,"^[Kia]",500)
 #alfa <- html_session("http://www.autotrader.co.za/used-cars/alfa-romeo")
 #dataAlfa<-getWebPageData(alfa,"^[Alfa]",2) 
 
+#----------------------------------------------------------------------
 
+#Next store the data in csv for now
+#-------------------------------------------------------------------
 write.csv2(dataToyota,"toyota.csv")
 write.csv2(dataMercedes,"mercedes.csv")
 write.csv2(dataNissan,"nissan.csv")
@@ -79,18 +93,20 @@ write.csv2(dataHonda,"honda.csv")
 write.csv2(dataHyundai,"hyundai.csv")
 write.csv2(dataVolvo,"volvo.csv")
 write.csv2(dataRenault,"renault.csv")
+write.csv2(dataVolkswagen,"volkswagen.csv")
+write.csv2(dataAudi,"audi.csv")
+write.csv2(dataSubaru,"subaru.csv")
 
-#define the make we will use!
-volkswagen <- html_session("http://www.autotrader.co.za/used-cars/volkswagen")
-dataVolkswagen<-getWebPageData(volkswagen,"^[Volk]",100)
-
-audi <- html_session("http://www.autotrader.co.za/used-cars/audi")
-dataAudi<-getWebPageData(audi,"^[Audi]",100)
+#---------------------------------------------------------------------------
 
 
 
 
 
+
+
+#Now for plotting
+#---------------------------------------------------------------------------
 modelName<-'GOLF'
 data<-dataVolkswagen
 x<-data$Year[data$Model==modelName]
@@ -114,6 +130,27 @@ ggplot(data, aes(x=Year, y=Price/1000, colour=Model)) +
   geom_point(alpha=0) +
   geom_smooth(alpha=.2, size=1) +
   ggtitle("Price of Car vs Year\n[Scraped from AutoTrader.co.za.]") + scale_x_reverse( lim=c(2016,2005)) + ylim(c(100,450)) + ylab('Price\n[R1000s]')
+
+ggsave(filename="myPlot.pdf",width=12, height=8)
+ggsave(filename="myPlot.png",width=12, height=8)
+
+#Now for plotting
+#---------------------------------------------------------------------------
+
+data<-dataVolkswagen[dataVolkswagen$Model=='TIGUAN',]
+data<-rbind(data,dataNissan[dataNissan$Model=='QASHQAI',])
+data<-rbind(data,dataNissan[dataNissan$Model=='X-TRAIL',])
+data<-rbind(data,dataToyota[dataToyota$Model=='FORTUNER',])
+data<-rbind(data,dataBMW[dataBMW$Model=='X5',])
+data<-rbind(data,dataVolkswagen[dataVolkswagen$Model=='POLO',])
+#data<-rbind(data,dataSubaru[dataSubaru$Model=='FORESTER',])
+
+#data$Model[data$Model=='3']<-'3 Series'
+
+ggplot(data, aes(x=Year, y=Price/1000, colour=Model)) +
+  geom_point(alpha=0.0) +
+  geom_smooth(method='loess',alpha=.2, size=2) +
+  ggtitle("Price of Car vs Year\n[Scraped from AutoTrader.co.za.]") + scale_x_reverse( lim=c(2016,2005)) + ylim(c(100,800)) + ylab('Price\n[R1000s]')
 
 ggsave(filename="myPlot.pdf",width=12, height=8)
 ggsave(filename="myPlot.png",width=12, height=8)
