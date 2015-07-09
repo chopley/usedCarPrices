@@ -7,22 +7,12 @@ getWebPageData <- function(webPage,make,nPages){
   #store the Data
   #move to next page
   fail<-0
-  for(i in 1:nPages){
-    tryCatch({
-      webPage<-webPage%>% follow_link("Next")},
-      error= function(err){nPages=i}      )#horrible hack to get out of the for loop cause I couldn't work out how to do this with the try catch
-    
-      bb<-webPage %>% 
-      html_nodes(".searchResult") %>%
-      html_text()
-    aa<-rbind(aa,bb)
-  }
-  
-  #define the make we will use!
- 
   data=data.frame()
-  
-  for(i in 1:length(aa)){
+  for(jPage in 1:nPages){
+    print('here')
+  #  aa<-rbind(aa,bb)
+  #define the make we will use!
+ for(i in 1:length(aa)){
     #split the listing by t
     bb<-strsplit(aa[i],"\t")
     #first we get the prices and clean them up a little
@@ -79,13 +69,24 @@ getWebPageData <- function(webPage,make,nPages){
     #  }
     
     try(
-      thisRow<-data.frame(as.numeric(price),as.numeric(year),as.character(make),as.character(model),as.numeric(mileage),as.numeric(engine))
+      thisRow<-data.frame(as.numeric(price),as.numeric(year),as.character(make),as.character(model),as.numeric(mileage),as.numeric(engine),as.numeric(jPage))
     )
     
     data<-rbind(data,thisRow)
   }
+ 
+ tryCatch({
+   webPage<-webPage%>% follow_link("Next")},
+   error= function(err){nPages=jPage}      )#horrible hack to get out of the for loop cause I couldn't work out how to do this with the try catch
+ 
+   aa<-webPage %>% 
+   html_nodes(".searchResult") %>%
+   html_text()
   
-  colnames(data)<-c("Price","Year","Make","Model","Mileage","Engine")
-  return(data)
+
   
+    }
+ colnames(data)<-c("Price","Year","Make","Model","Mileage","Engine","AutoTraderPage")
+ 
+ return(data)
 }
