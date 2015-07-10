@@ -1,6 +1,11 @@
-getWebPageData <- function(webPage,make,nPages){
+getWebPageData <- function(webPageBase,makeInput,startPage,nPages){
+  
+  webPageBase<- paste(webPageBase,"?pageNumber=",as.character(startPage),sep="")
+  webPage <- html_session(as.character(webPageBase))
+ 
  #function to get Data from Autotradr 
   #we get the ads from autoTrader for this model of Car
+  print(webPageBase)
   aa<-webPage %>% 
     html_nodes(".searchResult") %>%
     html_text() 
@@ -8,6 +13,7 @@ getWebPageData <- function(webPage,make,nPages){
   #move to next page
   fail<-0
   data=data.frame()
+  pageNumber<-startPage
   for(jPage in 1:nPages){
     print('here')
   #  aa<-rbind(aa,bb)
@@ -32,7 +38,7 @@ getWebPageData <- function(webPage,make,nPages){
     }
     
     #we extract the make and model information using the model we are currently looking at
-    makeModel<-bb[[1]][grep(make,bb[[1]])]
+    makeModel<-bb[[1]][grep(makeInput,bb[[1]])]
     #assume that the first
     splitMakeModel<-strsplit(makeModel[1]," ")
     make<-splitMakeModel[[1]][1]
@@ -69,7 +75,7 @@ getWebPageData <- function(webPage,make,nPages){
     #  }
     
     try(
-      thisRow<-data.frame(as.numeric(price),as.numeric(year),as.character(make),as.character(model),as.numeric(mileage),as.numeric(engine),as.numeric(jPage))
+      thisRow<-data.frame(as.numeric(price),as.numeric(year),as.character(make),as.character(model),as.numeric(mileage),as.numeric(engine),as.numeric(pageNumber))
     )
     
     data<-rbind(data,thisRow)
@@ -82,6 +88,8 @@ getWebPageData <- function(webPage,make,nPages){
    aa<-webPage %>% 
    html_nodes(".searchResult") %>%
    html_text()
+   pageNumber=pageNumber+1
+ 
   
 
   

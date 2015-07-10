@@ -6,71 +6,41 @@ source('./functions.R')
 
 #First we pull the data from the autotrader website
 #----------------------------------------------------------------------
-toyota <- html_session("http://www.autotrader.co.za/used-cars/toyota")
-dataToyota<-getWebPageData(toyota,"^[Toyota]",500)
+toyota<-"http://www.autotrader.co.za/used-cars/toyota"
+mercedes <- "http://www.autotrader.co.za/used-cars/mercedes-benz"
+daewoo <- "http://www.autotrader.co.za/used-cars/daewoo"
+nissan <- "http://www.autotrader.co.za/used-cars/nissan"
+bmw <- "http://www.autotrader.co.za/used-cars/bmw"
+renault <-"http://www.autotrader.co.za/used-cars/renault"
+volvo <- "http://www.autotrader.co.za/used-cars/volvo"
+hyundai <- "http://www.autotrader.co.za/used-cars/hyundai"
+honda <- "http://www.autotrader.co.za/used-cars/honda"
+chevrolet <- "http://www.autotrader.co.za/used-cars/chevrolet"
+peugeot <- "http://www.autotrader.co.za/used-cars/peugeot"
+ford <- "http://www.autotrader.co.za/used-cars/ford"
+mazda <- "http://www.autotrader.co.za/used-cars/mazda"
+kia <- "http://www.autotrader.co.za/used-cars/kia"
+volkswagen <- "http://www.autotrader.co.za/used-cars/volkswagen"
+audi <- "http://www.autotrader.co.za/used-cars/audi"
+subaru <- "http://www.autotrader.co.za/used-cars/subaru"
 
-mercedes <- html_session("http://www.autotrader.co.za/used-cars/mercedes-benz")
-dataMercedes<-getWebPageData(mercedes,"^[Mercedes]",500)
-
-daewoo <- html_session("http://www.autotrader.co.za/used-cars/daewoo")
-dataDaewoo<-getWebPageData(daewoo,"^[Daewoo]",500)
-
-#define the make we will use!
-nissan <- html_session("http://www.autotrader.co.za/used-cars/nissan")
-dataNissan<-getWebPageData(nissan,"^[Nissan]",500)
-
-#define the make we will use!
-bmw <- html_session("http://www.autotrader.co.za/used-cars/bmw")
-dataBMW<-getWebPageData(bmw,"^[BMW]",500)
-
-#define the make we will use!
-renault <- html_session("http://www.autotrader.co.za/used-cars/renault")
-dataRenault<-getWebPageData(renault,"^[Renault]",500)
-
-#define the make we will use!
-volvo <- html_session("http://www.autotrader.co.za/used-cars/volvo")
-dataVolvo<-getWebPageData(volvo,"^[Volvo]",500)
-
-#define the make we will use!
-hyundai <- html_session("http://www.autotrader.co.za/used-cars/hyundai")
-dataHyundai<-getWebPageData(hyundai,"^[Hyundai]",500)
-
-#define the make we will use!
-honda <- html_session("http://www.autotrader.co.za/used-cars/honda")
-dataHonda<-getWebPageData(honda,"^[Honda]",500)
-
-#define the make we will use!
-chevrolet <- html_session("http://www.autotrader.co.za/used-cars/chevrolet")
-dataChevrolet<-getWebPageData(chevrolet,"^[Chevrolet]",500)
-
-#define the make we will use!
-peugeot <- html_session("http://www.autotrader.co.za/used-cars/peugeot")
-dataPeugeot<-getWebPageData(peugeot,"^[Peugeot]",500)
-
-#define the make we will use!
-ford <- html_session("http://www.autotrader.co.za/used-cars/ford")
-dataFord<-getWebPageData(ford,"^[Ford]",500)
-
-#define the make we will use!
-mazda <- html_session("http://www.autotrader.co.za/used-cars/mazda")
-dataMazda<-getWebPageData(mazda,"^[Mazda]",500)
-
-#define the make we will use!
-kia <- html_session("http://www.autotrader.co.za/used-cars/kia")
-dataKia<-getWebPageData(kia,"^[Kia]",500)
-
-#define the make we will use!
-volkswagen <- html_session("http://www.autotrader.co.za/used-cars/volkswagen")
-dataVolkswagen<-getWebPageData(volkswagen,"^[Volk]",500)
-
-audi <- html_session("http://www.autotrader.co.za/used-cars/audi")
-dataAudi<-getWebPageData(audi,"^[Audi]",500)
-
-subaru <- html_session("http://www.autotrader.co.za/used-cars/subaru")
-dataSubaru<-getWebPageData(subaru,"^[Subaru]",500)
-#define the make we will use!
-#kia <- html_session("http://www.autotrader.co.za/used-cars/kia")
-#dataKia<-getWebPageData(mazda,"^[Kia]",2)
+dataToyota<-getWebPageData(toyota,"^[Toyota]",1,50)
+dataMercedes<-getWebPageData(mercedes,"^[Mercedes]",1,500)
+dataDaewoo<-getWebPageData(daewoo,"^[Daewoo]",1,500)
+dataNissan<-getWebPageData(nissan,"^[Nissan]",1,500)
+dataBMW<-getWebPageData(bmw,"^[BMW]",1,500)
+dataRenault<-getWebPageData(renault,"^[Renault]",1,500)
+dataVolvo<-getWebPageData(volvo,"^[Volvo]",1,500)
+dataHyundai<-getWebPageData(hyundai,"^[Hyundai]",1,500)
+dataHonda<-getWebPageData(honda,"^[Honda]",1,500)
+dataChevrolet<-getWebPageData(chevrolet,"^[Chevrolet]",1,500)
+dataPeugeot<-getWebPageData(peugeot,"^[Peugeot]",1,500)
+dataFord<-getWebPageData(ford,"^[Ford]",1,500)
+dataMazda<-getWebPageData(mazda,"^[Mazda]",1,500)
+dataKia<-getWebPageData(kia,"^[Kia]",1,500)
+dataVolkswagen<-getWebPageData(volkswagen,"^[Volk]",1,500)
+dataAudi<-getWebPageData(audi,"^[Audi]",1,500)
+dataSubaru<-getWebPageData(subaru,"^[Subaru]",1,500)
 
 #define the make we will use! #Alfa needs some work because the make is two words...
 #alfa <- html_session("http://www.autotrader.co.za/used-cars/alfa-romeo")
