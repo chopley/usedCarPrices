@@ -1,8 +1,20 @@
 library(rvest)
 library(ggplot2)
+library(doParallel)
+library(foreach)
+
 
 
 source('./functions.R')
+
+
+nCores<-detectCores()
+cl<-makeCluster(nCores)
+registerDoParallel(cl)
+getDoParWorkers()
+mcoptions <- list(preschedule=FALSE, set.seed=FALSE)
+getDoParName()
+
 
 #First we pull the data from the autotrader website
 #----------------------------------------------------------------------
@@ -24,48 +36,69 @@ volkswagen <- "http://www.autotrader.co.za/used-cars/volkswagen"
 audi <- "http://www.autotrader.co.za/used-cars/audi"
 subaru <- "http://www.autotrader.co.za/used-cars/subaru"
 
-dataToyota<-getWebPageData(toyota,"^[Toyota]",1,50)
-dataMercedes<-getWebPageData(mercedes,"^[Mercedes]",1,500)
-dataDaewoo<-getWebPageData(daewoo,"^[Daewoo]",1,500)
-dataNissan<-getWebPageData(nissan,"^[Nissan]",1,500)
-dataBMW<-getWebPageData(bmw,"^[BMW]",1,500)
-dataRenault<-getWebPageData(renault,"^[Renault]",1,500)
-dataVolvo<-getWebPageData(volvo,"^[Volvo]",1,500)
-dataHyundai<-getWebPageData(hyundai,"^[Hyundai]",1,500)
-dataHonda<-getWebPageData(honda,"^[Honda]",1,500)
-dataChevrolet<-getWebPageData(chevrolet,"^[Chevrolet]",1,500)
-dataPeugeot<-getWebPageData(peugeot,"^[Peugeot]",1,500)
-dataFord<-getWebPageData(ford,"^[Ford]",1,500)
-dataMazda<-getWebPageData(mazda,"^[Mazda]",1,500)
-dataKia<-getWebPageData(kia,"^[Kia]",1,500)
-dataVolkswagen<-getWebPageData(volkswagen,"^[Volk]",1,500)
-dataAudi<-getWebPageData(audi,"^[Audi]",1,500)
-dataSubaru<-getWebPageData(subaru,"^[Subaru]",1,500)
+
+
+
+
+webPages<-c(toyota,mercedes,daewoo,nissan,bmw,renault,volvo,hyundai,honda,chevrolet,peugeot,ford,mazda,kia,volkswagen,audi,subaru)
+makeNames<-c("^[Toyota]","^[Mercedes]","^[Daewoo]","^[Nissan]","^[BMW]","^[Renault]","^[Volvo]","^[Hyundai]",
+             "^[Honda]","^[Chevrolet]","^[Peugeot]","^[Ford]","^[Mazda]","^[Kia]","^[Volk]","^[Audi]","^[Subaru]")
+fileNames<-c("toyota.csv","mercedes.csv","daewoo.csv","nissan.csv",'bmw.csv','renault.csv','volvo.csv','hyundai.csv','honda.csv',
+             'chevrolet.csv','peugeot.csv','ford.csv','mazda.csv','kia.csv','volkswagen.csv','audi.csv','subaru.csv')
+
+
+#lets go parallel and get all the data!
+#remmeber foreach requires you to load packages again1
+foreach(i=1:17, .options.multicore=mcoptions, .packages='rvest') %dopar% {
+  dataFrame <- getWebPageData(webPages[i],makeNames[i],1,500)
+  write.csv2(dataFrame,fileNames[i])
+}
+
+
+
+
+
 
 #define the make we will use! #Alfa needs some work because the make is two words...
 #alfa <- html_session("http://www.autotrader.co.za/used-cars/alfa-romeo")
 #dataAlfa<-getWebPageData(alfa,"^[Alfa]",2) 
-
+#dataToyota<-getWebPageData(toyota,"^[Toyota]",1,2)
+#dataMercedes<-getWebPageData(mercedes,"^[Mercedes]",1,500)
+#dataDaewoo<-getWebPageData(daewoo,"^[Daewoo]",1,500)
+#dataNissan<-getWebPageData(nissan,"^[Nissan]",1,500)
+#dataBMW<-getWebPageData(bmw,"^[BMW]",1,500)
+#dataRenault<-getWebPageData(renault,"^[Renault]",1,500)
+#dataVolvo<-getWebPageData(volvo,"^[Volvo]",1,500)
+#dataHyundai<-getWebPageData(hyundai,"^[Hyundai]",1,500)
+#dataHonda<-getWebPageData(honda,"^[Honda]",1,500)
+#dataChevrolet<-getWebPageData(chevrolet,"^[Chevrolet]",1,500)
+#dataPeugeot<-getWebPageData(peugeot,"^[Peugeot]",1,500)
+#dataFord<-getWebPageData(ford,"^[Ford]",1,500)
+#dataMazda<-getWebPageData(mazda,"^[Mazda]",1,500)
+#dataKia<-getWebPageData(kia,"^[Kia]",1,500)
+#dataVolkswagen<-getWebPageData(volkswagen,"^[Volk]",1,500)
+#dataAudi<-getWebPageData(audi,"^[Audi]",1,500)
+#dataSubaru<-getWebPageData(subaru,"^[Subaru]",1,500)
 #----------------------------------------------------------------------
 
 #Next store the data in csv for now
 #-------------------------------------------------------------------
-write.csv2(dataToyota,"toyota.csv")
-write.csv2(dataMercedes,"mercedes.csv")
-write.csv2(dataNissan,"nissan.csv")
-write.csv2(dataBMW,"bmw.csv")
-write.csv2(dataKia,"kia.csv")
-write.csv2(dataMazda,"mazda.csv")
-write.csv2(dataFord,"ford.csv")
-write.csv2(dataPeugeot,"peugeot.csv")
-write.csv2(dataChevrolet,"chevrolet.csv")
-write.csv2(dataHonda,"honda.csv")
-write.csv2(dataHyundai,"hyundai.csv")
-write.csv2(dataVolvo,"volvo.csv")
-write.csv2(dataRenault,"renault.csv")
-write.csv2(dataVolkswagen,"volkswagen.csv")
-write.csv2(dataAudi,"audi.csv")
-write.csv2(dataSubaru,"subaru.csv")
+#write.csv2(dataToyota,"toyota.csv")
+#write.csv2(dataMercedes,"mercedes.csv")
+#write.csv2(dataNissan,"nissan.csv")
+#write.csv2(dataBMW,"bmw.csv")
+#write.csv2(dataKia,"kia.csv")
+#write.csv2(dataMazda,"mazda.csv")
+#write.csv2(dataFord,"ford.csv")
+#write.csv2(dataPeugeot,"peugeot.csv")
+#write.csv2(dataChevrolet,"chevrolet.csv")
+#write.csv2(dataHonda,"honda.csv")
+#write.csv2(dataHyundai,"hyundai.csv")
+#write.csv2(dataVolvo,"volvo.csv")
+#write.csv2(dataRenault,"renault.csv")
+#write.csv2(dataVolkswagen,"volkswagen.csv")
+#write.csv2(dataAudi,"audi.csv")
+#write.csv2(dataSubaru,"subaru.csv")
 
 #---------------------------------------------------------------------------
 
