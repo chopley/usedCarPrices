@@ -45,6 +45,8 @@ makeNames<-c("^[Toyota]","^[Mercedes]","^[Daewoo]","^[Nissan]","^[BMW]","^[Renau
              "^[Honda]","^[Chevrolet]","^[Peugeot]","^[Ford]","^[Mazda]","^[Kia]","^[Volk]","^[Audi]","^[Subaru]")
 fileNames<-c("toyota.csv","mercedes.csv","daewoo.csv","nissan.csv",'bmw.csv','renault.csv','volvo.csv','hyundai.csv','honda.csv',
              'chevrolet.csv','peugeot.csv','ford.csv','mazda.csv','kia.csv','volkswagen.csv','audi.csv','subaru.csv')
+dataVariables<-c(dataToyota,dataMercedes,dataDaewoo,dataNissan,dataBmw,dataRenault,dataVolvo,dataHyundai,
+                 dataHonda,dataChevrolet,dataPeugeot,dataFord,dataMazda,dataKia,dataVolkswagen,dataAudi,dataSubaru)
 
 
 #lets go parallel and get all the data!
@@ -53,8 +55,9 @@ foreach(i=1:17, .options.multicore=mcoptions, .packages='rvest') %dopar% {
   dataFrame <- getWebPageData(webPages[i],makeNames[i],1,500)
   write.csv2(dataFrame,fileNames[i])
 }
+stopCluster(cl)
 
-
+formula <-Survived ~  Pclass + Sex + FarePassenger+ Age + Embarked + EthnicFeat + TitleFeat + GroupFeat + MFCoupleFeat + FamilyFeat + CabinFeat
 
 
 
