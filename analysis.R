@@ -57,7 +57,6 @@ foreach(i=1:17, .options.multicore=mcoptions, .packages='rvest') %dopar% {
 }
 stopCluster(cl)
 
-formula <-Survived ~  Pclass + Sex + FarePassenger+ Age + Embarked + EthnicFeat + TitleFeat + GroupFeat + MFCoupleFeat + FamilyFeat + CabinFeat
 
 
 
