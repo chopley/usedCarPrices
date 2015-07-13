@@ -98,3 +98,59 @@ getWebPageData <- function(webPageBase,makeInput,startPage,nPages){
  
  return(data)
 }
+
+cleanData <- function(data){
+  #remove the data with na in in
+  data<-na.omit(data)
+  #remove the date that has Featured in it- this is a problem with the scraping function
+  data<-data[-which(data$Make=="Featured",),]
+  nUnique<-unique(data$Make)
+  for(i in 1:length(nUnique)){
+    if(nrow(data[data$Make==nUnique[i],])<50){
+      data<-data[-which(data$Make==nUnique[i],),]
+    }
+  }
+  data$Make<-droplevels(data$Make)
+  
+ 
+  
+  data$Model<-as.factor(data$Model)
+  nUnique<-unique(data$Model)
+  for(i in 1:length(nUnique)){
+    if(nrow(data[data$Model==nUnique[i],])<50){
+      data<-data[-which(data$Model==nUnique[i],),]
+    }
+  }
+  data$Model<-droplevels(data$Model)
+  
+  
+  data$Engine<-as.factor(data$Engine)
+  nUnique<-unique(data$Engine)
+  for(i in 1:length(nUnique)){
+    if(nrow(data[data$Engine==nUnique[i],])<50){
+      data<-data[-which(data$Engine==nUnique[i],),]
+    }
+  }
+  
+  data$Engine<-droplevels(data$Engine)
+
+  
+  return(data)
+  
+}
+
+featureCreation <-function(data,mileageBreaks,priceBreaks){
+  
+  data$MileageFeat<-as.factor(cut(data$Mileage,mileageBreaks,labels=FALSE,include.lowest = TRUE))
+  data$PriceFeat<-as.factor(cut(data$Price,priceBreaks,labels=FALSE,include.lowest = TRUE))
+  data$MileageFeat<-as.factor(data$MileageFeat)
+  data$PriceFeat<-as.factor(data$PriceFeat)
+  data$Make<-as.factor(data$Make)
+  data$Model<-as.factor(data$Model)
+  data$Engine<-as.factor(data$Engine)
+  data$Year<-as.factor(data$Year)
+  
+  
+  return(data)
+  
+}
