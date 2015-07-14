@@ -2,7 +2,9 @@ library(shiny)
 load('predict.RData')
 load('purchase.RData')
 load('fitBoost.RData')
+library('ggplot2')
 library(gbm)
+library(splines)
 load('data.RData')
 
 source('./functions.R')
@@ -24,7 +26,7 @@ shinyServer(
       purchaseVehicle$Model <-toupper(input$text2)
       purchaseVehicle$Year<-input$text3
       purchaseVehicle$Engine<-input$text4
-      purchaseVehicle$Mileage<-input$text5
+      purchaseVehicle$Mileage<-as.numeric(input$text5)
 
       purchaseVehicle<-featureCreation(purchaseVehicle,mileageBreaks,priceBreaks)
       
@@ -42,12 +44,69 @@ shinyServer(
       tt<-1:length(priceBreaks)   
       
       b<-approx(x=tt, y=priceBreaks, PricesOfInterest, method = "linear")
-      isolate(paste('R',floor(b$y)))
+      isolate(paste('R',floor(b$y)))})
       
+    #--------------------calculate the depreciation  
+    output$depreciation <- renderPlot({
+      input$goButton
+#      plot(1,1)
+      purchaseVehicle$Make <-toupper(input$text1)
+      purchaseVehicle$Model <-toupper(input$text2)
+      purchaseVehicle$Year<-input$text3
+      purchaseVehicle$Engine<-input$text4
+      purchaseVehicle$Mileage<-as.numeric(input$text5)
+      
+      depreciation<-purchaseVehicle
+      
+      for(i in 2:5){
+        depreciation<-rbind(depreciation,purchaseVehicle)
+        depreciation$Year[i]<-as.numeric(as.character(depreciation$Year[i-1]))-1
+      }
+#       
+      depreciation<-featureCreation(depreciation,mileageBreaks,priceBreaks)
+      labelsMake <- levels(data$Make)
+      labelsModel <- levels(data$Model)
+      labelsEngine <- levels(data$Engine)
+      labelsMileageFeat <- levels(data$MileageFeat)
+      depreciation$Make<- factor(depreciation$Make, levels=labelsMake)
+      depreciation$Model<- factor(depreciation$Model, levels=labelsModel)
+      depreciation$Engine<- factor(depreciation$Engine, levels=labelsEngine)
+      depreciation$MileageFeat<- factor(as.character(depreciation$MileageFeat), levels=labelsMileageFeat)
+      PricesOfInterest <- predict(fitBoost, as.data.frame(depreciation),n.trees=50)
+      x<-rbind(floor(PricesOfInterest),ceiling(PricesOfInterest))
+      y<-rbind(priceBreaks[x[1,]],priceBreaks[x[2,]])
+      tt<-1:length(priceBreaks)   
+
+      b<-approx(x=tt, y=priceBreaks, PricesOfInterest, method = "linear")
+#       
+      Year<-as.numeric(as.character(depreciation$Year))
+      Price<-as.numeric(b$y)
+      data<-data.frame(Year,Price)
+#      plot(Year,Price)
+       
+       ggplot(data, aes(x=Year, y=Price)) +
+                  geom_point(alpha=1) +
+                  geom_line()+
+                  stat_smooth(method = "rlm", formula = y ~ ns(x,3),size=2) +
+                #  geom_smooth(alpha=.2, size=2,method = "rlm",formula = y ~ ns(x,3)) +
+                  ggtitle("Price of Car vs Year\n[Scraped from AutoTrader.co.za.]") + scale_x_reverse()+ ylab('Price')
+
+    })
+       
+       
+#       
+#       
+
+   
+#       output$depreciation <- renderPlot({
+#       
+#       
+#       })
+    
       ##Another example, uncomment to see        
       #  if (input$goButton == 0) "You have not pressed the button"
       #  else if (input$goButton == 1) "you pressed it once"
       #  else "OK quit pressing it"
-    })
+    
   }
 )
