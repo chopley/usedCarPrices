@@ -3,9 +3,9 @@ library(shiny)
 shinyUI(pageWithSidebar(
   headerPanel("Car Price Estimator V0.1 Charles Copley"),
   sidebarPanel(
-    textInput(inputId="text1", label = "Car Make e.g. Toyota",value='Toyota'),
-    textInput(inputId="text2", label = "Model e.g. Corolla",'Corolla'),
-    textInput(inputId="text3", label = "Year e.g. 2009",value='2010'),
+    textInput(inputId="text1", label = "Car Make e.g. Toyota, Audi, Chevrolet",value='Toyota'),
+    textInput(inputId="text2", label = "Model e.g. Corolla, A4, Spark",'Corolla'),
+    textInput(inputId="text3", label = "Year e.g. 2009",value='2009'),
     textInput(inputId="text4", label = "Engine e.g. 1.8",value=1.8),
     textInput(inputId="text5", label = "Mileage (in km) e.g. 120000",value='120000'),
     actionButton("goButton","Go!")      
