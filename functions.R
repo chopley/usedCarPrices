@@ -1,11 +1,12 @@
 getWebPageData <- function(webPageBase,makeInput,startPage,nPages){
-  
   webPageBase<- paste(webPageBase,"?pageNumber=",as.character(startPage),sep="")
   webPage <- html_session(as.character(webPageBase))
  
  #function to get Data from Autotradr 
   #we get the ads from autoTrader for this model of Car
+  #browser()
   print(webPageBase)
+ #this variable will hold all the results from this particular webpage
   aa<-webPage %>% 
     html_nodes(".searchResult") %>%
     html_text() 
@@ -17,10 +18,12 @@ getWebPageData <- function(webPageBase,makeInput,startPage,nPages){
   for(jPage in 1:nPages){
     print('here')
   #  aa<-rbind(aa,bb)
-  #define the make we will use!
+  #now we go through all the results for each webpage individually
  for(i in 1:length(aa)){
-    #split the listing by t
-    bb<-strsplit(aa[i],"\t")
+    #split the listing by \r\n- this used to be \t
+    bb<-strsplit(aa[i],"\r\n")
+    #and remove the leading and trailing whitespace
+    bb[[1]]<-gsub("^\\s+|\\s+$", "", bb[[1]])
     #first we get the prices and clean them up a little
     price<-bb[[1]][grep("^[R :digit:]{2,}",bb[[1]])]
     price<-gsub("R ","",price) #remove the currency since all cars are in Rands
@@ -30,6 +33,7 @@ getWebPageData <- function(webPageBase,makeInput,startPage,nPages){
       price=NaN
     }
     
+    #now we search for the year which is a field that starts with a number as is 4 digits long
     year<- bb[[1]][grep("^[0-9]{4}",bb[[1]])]
     year<-gsub("[\r\n ]","",year) #remove the whitespace and nonsense
     year<- year[grep("^[0-9]{4}$",year)] # the year is always exactly 4 digits with nothing before or after
@@ -38,11 +42,14 @@ getWebPageData <- function(webPageBase,makeInput,startPage,nPages){
     }
     
     #we extract the make and model information using the model we are currently looking at
+    
     makeModel<-bb[[1]][grep(makeInput,bb[[1]])]
     #assume that the first
     splitMakeModel<-strsplit(makeModel[1]," ")
+    #The first one is usually the make
     make<-splitMakeModel[[1]][1]
     make<-gsub("[\r\n ]","",make) #remove the whitespace and nonsense
+      
     if(length(make)==0){
       make=NaN
     }
